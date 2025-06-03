@@ -1,0 +1,30 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titling}
+
+\geometry{margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thepage}
+\lhead{{{title}}}
+
+\title{{{title}}}
+\author{Generated from Lecture Transcript}
+\date{{{date}}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+These notes were automatically generated from a lecture transcript using speech recognition and text processing.
+
+{body}
+
+\end{document}
