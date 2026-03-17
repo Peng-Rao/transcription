@@ -84,6 +84,57 @@ class TextProcessor:
         logger.info("Text processing completed")
         return final_text
 
+    def reduce_for_llm(self, text, max_sentences=120):
+        """
+        Reduce token usage before sending text to an LLM.
+
+        This keeps informative sentences while dropping noisy, repetitive content.
+        """
+        if not text.strip():
+            return ""
+
+        cleaned = self._clean_text(text)
+        sentences = sent_tokenize(cleaned)
+        scored = []
+
+        for sentence in sentences:
+            normalized = sentence.lower().strip()
+            if len(normalized.split()) < 5:
+                continue
+
+            words = word_tokenize(normalized)
+            content_words = [
+                w
+                for w in words
+                if w.isalpha()
+                and w not in self.stop_words
+                and w not in self.academic_stopwords
+            ]
+            if not content_words:
+                continue
+
+            # A lightweight informativeness score that favors dense content words.
+            score = len(set(content_words)) / max(len(words), 1)
+            scored.append((score, sentence.strip()))
+
+        # Remove duplicates while preserving the highest scoring variants first.
+        scored.sort(key=lambda item: item[0], reverse=True)
+        unique_sentences = []
+        seen = set()
+        for _, sentence in scored:
+            key = sentence.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            unique_sentences.append(sentence)
+            if len(unique_sentences) >= max_sentences:
+                break
+
+        final_text = self._create_paragraphs(unique_sentences)
+
+        logger.info("Text processing completed")
+        return final_text
+
     def _clean_text(self, text):
         """Basic text cleaning"""
         # Remove extra whitespace
